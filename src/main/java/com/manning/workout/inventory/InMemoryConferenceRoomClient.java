@@ -9,11 +9,11 @@ public class InMemoryConferenceRoomClient implements InventoryConferenceRoomClie
     @Override
     public List<ConferenceRoom> allRooms() {
         return List.of(
-                new ConferenceRoom(1, "gebouw-1"),
-                new ConferenceRoom(2, "gebouw-2"),
-                new ConferenceRoom(3, "gebouw-3"),
-                new ConferenceRoom(4, "gebouw-4"),
-                new ConferenceRoom(5, "gebouw-5")
+                new ConferenceRoom("gebouw-1", 1, 1, "A"),
+                new ConferenceRoom("gebouw-2", 11, 3, "D"),
+                new ConferenceRoom("gebouw-3", 22, 5, "C"),
+                new ConferenceRoom("gebouw-4", 33, 7, "B"),
+                new ConferenceRoom("gebouw-5", 44, 9, "E")
         );
     }
 }
