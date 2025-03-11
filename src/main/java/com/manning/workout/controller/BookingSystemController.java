@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,8 +50,14 @@ public class BookingSystemController {
                 .filter(reservation -> reservation.isAvailable(startDate, endDate))
                 .forEach(reservation -> roomsById.remove(reservation.roomId));
 
+        // sort map by roomId
+        final List<ConferenceRoom> sortedConferenceRooms = roomsById.values()
+                .stream()
+                .sorted(Comparator.comparingInt(ConferenceRoom::roomId))
+                .toList();
+
         log.info("Found {} conference rooms", roomsById.size());
-        return roomsById.values();
+        return sortedConferenceRooms;
 
     }
 
@@ -60,7 +67,7 @@ public class BookingSystemController {
         String state = getRoomState(roomReservation.roomId);
         if (!"Available".equals(state)) {
             log.error("Room is currently in state {} and cannot be booked", state);
-            return ResponseEntity.badRequest().body("Room is currently in state " +state+ "and cannot be booked");
+            return ResponseEntity.badRequest().body("Room is currently in state " + state + " and cannot be booked");
         }
         // save room reservation request and generate booking ID
         RoomReservation reservation = reservationsRepository.save(roomReservation);
