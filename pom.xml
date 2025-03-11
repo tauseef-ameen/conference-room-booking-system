@@ -72,64 +72,62 @@
 	<profiles>
 		<profile>
 			<id>createimage</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>io.fabric8</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<version>${version.docker-maven-plugin}</version>
-						<configuration>
-							<images>
-								<image>
-									<name>manning/conference-room-booking-system:%v</name>
+			<build><plugins>
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>${version.docker-maven-plugin}</version>
+					<configuration>
+						<images>
+							<image>
+								<name>manning/conference-room-booking-system:%v</name>
 									<!-- ....................................... -->
 									<!-- Build configuration for creating images -->
 									<!-- ....................................... -->
-									<build>
-										<dockerFile>Dockerfile</dockerFile>
-										<assembly>
+								<build>
+									<dockerFile>Dockerfile</dockerFile>
+									<assembly>
 											<!--Details of maven assembly plugin can be found at:
                                             https://maven.apache.org/plugins/maven-assembly-plugin/assembly.html-->
-											<basedir>/</basedir>
-											<inline xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
-													xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-													xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 https://maven.apache.org/xsd/assembly-2.2.0.xsd">
+										<basedir>/</basedir>
+										<inline xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+												xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+												xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 https://maven.apache.org/xsd/assembly-2.2.0.xsd">
 
-												<fileSets>
-													<fileSet>
-														<directory>${project.basedir}/src/main/docker</directory>
-														<outputDirectory>.</outputDirectory>
-														<includes>
-															<include>docker-entrypoint.sh</include>
-														</includes>
-														<fileMode>755</fileMode>
-													</fileSet>
-													<fileSet>
-														<directory>${project.basedir}/target</directory>
-														<outputDirectory>.</outputDirectory>
-														<includes>
-															<include>conference-room-booking-system-*.jar</include>
-														</includes>
-														<fileMode>755</fileMode>
-													</fileSet>
-												</fileSets>
-											</inline>
-										</assembly>
-									</build>
-								</image>
-							</images>
-						</configuration>
-						<!-- Hooking into the lifecycle -->
-						<executions>
-							<execution>
-								<id>build</id>
-								<goals>
-									<goal>build</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
+											<fileSets>
+												<fileSet>
+													<directory>${project.basedir}/src/main/docker</directory>
+													<outputDirectory>.</outputDirectory>
+													<includes>
+														<include>docker-entrypoint.sh</include>
+													</includes>
+													<fileMode>755</fileMode>
+												</fileSet>
+												<fileSet>
+													<directory>${project.basedir}/target</directory>
+													<outputDirectory>.</outputDirectory>
+													<includes>
+														<include>conference-room-booking-system-*.jar</include>
+													</includes>
+													<fileMode>755</fileMode>
+												</fileSet>
+											</fileSets>
+										</inline>
+									</assembly>
+								</build>
+							</image>
+						</images>
+					</configuration>
+					<!-- Hooking into the lifecycle -->
+					<executions>
+						<execution>
+							<id>build</id>
+							<goals>
+								<goal>build</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin></plugins>
 			</build>
 		</profile>
 	</profiles>
