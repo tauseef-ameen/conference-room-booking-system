@@ -10,31 +10,19 @@
 	</parent>
 	<groupId>com.manning.workout</groupId>
 	<artifactId>conference-room-booking-system</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>conference-room-booking-system</name>
 	<description>A Spring Boot project to Book Conference Room</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<version.docker-maven-plugin>0.45.0</version.docker-maven-plugin>
+		<version.openapi.swagger>2.7.0</version.openapi.swagger>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -45,12 +33,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!--swagger url available at http://localhost:8081/swagger-ui.html-->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.7.0</version>
+			<version>${version.openapi.swagger}</version>
 		</dependency>
-		<!--        swagger url available at http://localhost:8081/swagger-ui.html-->
 	</dependencies>
 
 	<build>
@@ -81,5 +69,69 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>createimage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${version.docker-maven-plugin}</version>
+						<configuration>
+							<images>
+								<image>
+									<name>manning/conference-room-booking-system:%v</name>
+									<!-- ....................................... -->
+									<!-- Build configuration for creating images -->
+									<!-- ....................................... -->
+									<build>
+										<dockerFile>Dockerfile</dockerFile>
+										<assembly>
+											<!--Details of maven assembly plugin can be found at:
+                                            https://maven.apache.org/plugins/maven-assembly-plugin/assembly.html-->
+											<basedir>/</basedir>
+											<inline xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+													xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+													xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 https://maven.apache.org/xsd/assembly-2.2.0.xsd">
+
+												<fileSets>
+													<fileSet>
+														<directory>${project.basedir}/src/main/docker</directory>
+														<outputDirectory>.</outputDirectory>
+														<includes>
+															<include>docker-entrypoint.sh</include>
+														</includes>
+														<fileMode>755</fileMode>
+													</fileSet>
+													<fileSet>
+														<directory>${project.basedir}/target</directory>
+														<outputDirectory>.</outputDirectory>
+														<includes>
+															<include>conference-room-booking-system-*.jar</include>
+														</includes>
+														<fileMode>755</fileMode>
+													</fileSet>
+												</fileSets>
+											</inline>
+										</assembly>
+									</build>
+								</image>
+							</images>
+						</configuration>
+						<!-- Hooking into the lifecycle -->
+						<executions>
+							<execution>
+								<id>build</id>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
