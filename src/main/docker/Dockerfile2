@@ -1,0 +1,45 @@
+###########################################################################
+# Dockerfile - Spring Boot Application Runner
+###########################################################################
+
+# Set the base image to java17
+
+# Stage 1:
+FROM openjdk:17 as builder
+
+# Define default environment variables
+ENV APP_HOME=/opt/kubernetesWorkout/
+# Name of the executable artifact
+ENV ARTIFACT_NAME=conference-room-booking-system-*.jar
+# Java debug port
+ENV DEBUG_PORT=8000
+EXPOSE 8080
+# Copy all artifacts to the home directory
+# In maven/ the files as specified in the <assembly> section is stored
+# and need to be added manually
+COPY /maven/$ARTIFACT_NAME ${APP_HOME}/
+# Give permissions
+USER root
+# setting permission to 777 because tool tries to create log directories which is not possible with 755 permissions
+RUN chmod -R 777 /opt/kubernetesWorkout
+# set work directory
+WORKDIR /opt/kubernetesWorkout
+#  create 'classes' directory to extract jar
+RUN mkdir classes
+WORKDIR /opt/kubernetesWorkout/classes
+# Extract jar contents into the 'classes' directory
+RUN jar -xf ../$ARTIFACT_NAME
+
+# Stage 2: Use a minimal JRE base image
+FROM eclipse-temurin:17-jre
+ENV MAIN_CLASS=org.springframework.boot.loader.launch.JarLauncher
+# Set working directory
+WORKDIR /opt/kubernetesWorkout
+
+# Copy extracted class files from the builder stage
+COPY  --from=builder /opt/kubernetesWorkout/classes /opt/kubernetesWorkout/classes
+
+
+# Run the application using the extracted classes
+CMD ["/bin/sh", "-c", "java -cp classes $MAIN_CLASS"]
+

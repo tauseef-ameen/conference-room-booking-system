@@ -85,7 +85,7 @@
 									<!-- Build configuration for creating images -->
 									<!-- ....................................... -->
 								<build>
-									<dockerFile>Dockerfile</dockerFile>
+									<dockerFile>Dockerfile2</dockerFile>
 									<assembly>
 											<!--Details of maven assembly plugin can be found at:
                                             https://maven.apache.org/plugins/maven-assembly-plugin/assembly.html-->
