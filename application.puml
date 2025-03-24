@@ -1,0 +1,26 @@
+@startuml
+
+actor User as User
+participant "GET endpoint" as GET
+participant Inventory as JF
+participant "POST endpoint" as POST
+participant "Reservation List" as RL
+skinparam responseMessageBelowArrow true
+autonumber
+
+User -> GET : /available/{startTime}/{endTime}
+GET ---> JF : Inventory client to fetch all rooms from temporary ArrayList
+
+GET ---> RL : Fetch current reservation
+
+
+loop for each reservation
+    GET -> GET : remove the conf room from the map
+end
+User <- GET : return list of all available rooms
+
+User -> POST : /reserve
+POST ---> RL : store reservation in temporary ArrayList
+User <- RL : return booking details
+
+@enduml
