@@ -2,9 +2,9 @@ package com.manning.workout.controller;
 
 import com.manning.workout.exception.ServiceUnavailableException;
 import com.manning.workout.inventory.ConferenceRoom;
-import com.manning.workout.inventory.InventoryConferenceRoomClient;
+import com.manning.workout.inventory.ConferenceRoomInventory;
 import com.manning.workout.reservation.RoomReservation;
-import com.manning.workout.reservation.RoomReservationRepository;
+import com.manning.workout.reservation.RoomReservationRepositoryClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingSystemController {
 
-    private final RoomReservationRepository reservationsRepository;
-    private final InventoryConferenceRoomClient inventoryClient;
+    private final RoomReservationRepositoryClient reservationsRepository;
+    private final ConferenceRoomInventory conferenceRoomInventory;
     private final RestTemplate restTemplate = new RestTemplate();
     @Value("${room.state.service.url}")
     private String roomStateServiceUrl;
@@ -37,7 +37,7 @@ public class BookingSystemController {
 
         log.info("Getting available conference rooms for startDate {} and endDate {}", startDate, endDate);
         // obtain all conf rooms from inventory
-        List<ConferenceRoom> availableRooms = inventoryClient.allRooms();
+        List<ConferenceRoom> availableRooms = conferenceRoomInventory.allRooms();
         // create a map from id to conf room
         Map<Integer, ConferenceRoom> roomsById = availableRooms
                 .stream()

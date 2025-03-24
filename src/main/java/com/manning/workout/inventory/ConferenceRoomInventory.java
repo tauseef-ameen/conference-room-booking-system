@@ -1,8 +1,7 @@
 package com.manning.workout.inventory;
 
 import java.util.List;
-
-public interface InventoryConferenceRoomClient {
-
+@FunctionalInterface
+public interface ConferenceRoomInventory {
     List<ConferenceRoom> allRooms();
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class InMemoryConferenceRoomClient implements InventoryConferenceRoomClient{
+public class ConferenceRoomInventoryClient implements ConferenceRoomInventory {
     @Override
     public List<ConferenceRoom> allRooms() {
         return List.of(
