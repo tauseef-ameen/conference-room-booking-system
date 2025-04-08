@@ -28,8 +28,6 @@ public class BookingSystemController {
     private final RoomReservationRepositoryClient reservationsRepository;
     private final ConferenceRoomInventory conferenceRoomInventory;
     private final RestTemplate restTemplate = new RestTemplate();
-    @Value("${room.state.service.url}")
-    private String roomStateServiceUrl;
 
     @GetMapping("/available/{startDate}/{endDate}")
     public Collection<ConferenceRoom> availability(@PathVariable("startDate") LocalDateTime startDate,
@@ -59,30 +57,12 @@ public class BookingSystemController {
 
         log.info("Found {} available conference rooms", roomsById.size());
         return sortedConferenceRooms;
-
     }
 
     @PostMapping("/reserve")
     public ResponseEntity<?> reserve(@RequestBody RoomReservation roomReservation) {
-        // Call Room state microservice to get real time state of room
-        String state = getRoomState(roomReservation.roomId);
-        if (!"Available".equals(state)) {
-            log.error("Room is currently in state {} and cannot be booked", state);
-            return ResponseEntity.badRequest().body("Room is currently in state " + state + " and cannot be booked");
-        }
         // save room reservation request and generate booking ID
         RoomReservation reservation = reservationsRepository.save(roomReservation);
         return ResponseEntity.ok(reservation);
-    }
-
-    private String getRoomState(int roomId) {
-        String url = roomStateServiceUrl + "/state/" + roomId;
-        try {
-            log.info("Getting room state url {}", url);
-            return restTemplate.getForObject(url, String.class);
-        } catch (RestClientException e) {
-            log.error("Service unavailable: {}", url, e);
-            throw new ServiceUnavailableException("Room state service is unavailable");
-        }
     }
 }
