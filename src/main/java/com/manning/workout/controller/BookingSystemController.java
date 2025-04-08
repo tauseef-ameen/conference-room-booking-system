@@ -45,6 +45,7 @@ public class BookingSystemController {
 
         // get all current conf room Reservation List
         List<RoomReservation> roomReservationList = reservationsRepository.findAll();
+        log.info("Found {} existing reservation", roomReservationList.size());
         // for each reservation, remove the conf room from the map
         roomReservationList.stream()
                 .filter(reservation -> reservation.isAvailable(startDate, endDate))
@@ -56,7 +57,7 @@ public class BookingSystemController {
                 .sorted(Comparator.comparingInt(ConferenceRoom::roomId))
                 .toList();
 
-        log.info("Found {} conference rooms", roomsById.size());
+        log.info("Found {} available conference rooms", roomsById.size());
         return sortedConferenceRooms;
 
     }
