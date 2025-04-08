@@ -5,7 +5,7 @@
 # Set the base image to java17
 
 # Stage 1:
-FROM openjdk:17 as builder
+FROM openjdk:17-oracle as builder
 
 # Define default environment variables
 ENV APP_HOME=/opt/kubernetesWorkout/
@@ -33,12 +33,13 @@ RUN jar -xf ../$ARTIFACT_NAME
 # Stage 2: Use a minimal JRE base image
 FROM eclipse-temurin:17-jre
 ENV MAIN_CLASS=org.springframework.boot.loader.launch.JarLauncher
+ENV BUILD_ARTIFACT_PATH=/opt/kubernetesWorkout/classes
+ENV RUNTIME_ARTIFACT_PATH=/opt/kubernetesWorkoutJRE/classes
 # Set working directory
-WORKDIR /opt/kubernetesWorkout
+WORKDIR /opt/kubernetesWorkoutJRE
 
 # Copy extracted class files from the builder stage
-COPY  --from=builder /opt/kubernetesWorkout/classes /opt/kubernetesWorkout/classes
-
+COPY  --from=builder $BUILD_ARTIFACT_PATH $RUNTIME_ARTIFACT_PATH
 
 # Run the application using the extracted classes
 CMD ["/bin/sh", "-c", "java -cp classes $MAIN_CLASS"]
