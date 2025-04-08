@@ -1,0 +1,23 @@
+@startuml
+title Multi-Stage Dockerfile for Java: JDK for build, JRE for runtime
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam defaultTextAlignment center
+left to right direction
+
+node "Builder Stage (openjdk:17)" {
+  [1. Copy JAR to Image\n(conference-room-booking-system-*.jar)]
+  [2. Extract JAR Contents\nusing jar -xf]
+}
+
+node "Runtime Stage (eclipse-temurin:17-jre)" {
+  [3. Copy Extracted Files\nfrom Builder Stage]
+  [4. Launch App with\nJarLauncher and Classpath]
+}
+
+[1. Copy JAR to Image\n(conference-room-booking-system-*.jar)] --> [2. Extract JAR Contents\nusing jar -xf]
+[2. Extract JAR Contents\nusing jar -xf] --> [3. Copy Extracted Files\nfrom Builder Stage]
+[3. Copy Extracted Files\nfrom Builder Stage] --> [4. Launch App with\nJarLauncher and Classpath]
+
+@enduml

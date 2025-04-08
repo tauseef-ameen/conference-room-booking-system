@@ -1,0 +1,41 @@
+@startuml
+
+actor User
+participant "GET /available/{startTime}/{endTime}" as GET
+participant Inventory
+participant "POST /reserve" as POST
+participant "Reservation" as RL
+
+skinparam responseMessageBelowArrow true
+autonumber
+
+User -> GET : Request available rooms
+activate GET
+
+GET ---> Inventory : Fetch all rooms (temporary list)
+GET ---> RL : Fetch existing reservations
+
+loop for each reservation
+         GET -> GET : Remove reserved room from list
+end
+
+User <-- GET : Return available rooms
+deactivate GET
+
+User -> POST : Reserve a room
+activate POST
+
+note right of POST
+{
+  "roomId": "22",
+  "startTime": "2025-03-24T10:00",
+  "endTime": "2025-03-24T12:00"
+}
+end note
+
+POST ---> RL : Store reservation in temporary list
+User <-- RL : Return booking details
+
+deactivate POST
+
+@enduml
